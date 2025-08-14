@@ -1,4 +1,14 @@
-on: [push, pull_request]
+on: 
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 */6 * * *'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,3 +27,20 @@ jobs:
       with:
         name: ${{env.hash}}
         path: /dev/null
+
+  repo-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: TG908/fork-sync@v1.6.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          owner: felixonmars # fork 的上游仓库 user
+          head: master # fork 的上游仓库 branch
+          base: master # 本地仓库 branch
+
+    # 删除无用 workflow runs;
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        retain_days: 0.1
+        keep_minimum_runs: 1
