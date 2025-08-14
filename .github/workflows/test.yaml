@@ -10,7 +10,7 @@ on:
   schedule:
     - cron: '0 */6 * * *'
 jobs:
-  test:
+  job1:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -27,7 +27,6 @@ jobs:
       with:
         name: ${{env.hash}}
         path: /dev/null
-
   repo-sync:
     runs-on: ubuntu-latest
     steps:
@@ -37,10 +36,12 @@ jobs:
           owner: felixonmars # fork 的上游仓库 user
           head: master # fork 的上游仓库 branch
           base: master # 本地仓库 branch
-
+  Delete_workflow_runs:
     # 删除无用 workflow runs;
+    runs-on: ubuntu-latest
+    steps:
     - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@v2
+    - uses: Mattraks/delete-workflow-runs@v2
       with:
         retain_days: 0.1
         keep_minimum_runs: 1
